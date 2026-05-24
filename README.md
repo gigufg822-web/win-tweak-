@@ -73,7 +73,7 @@ Write-Host @"
 =========================================================
 "@ -ForegroundColor Cyan
 
-Write-Host " [✓] ALL REGISTRY TWEAKS APPLIED SUCCESSFULLY! (MOUSE PRESERVED)" -ForegroundColor Green
+Write-Host " [✓] ALL REGISTRY TWEAKS APPLIED SUCCESSFULLY! (รีตัวไว+ตีง่าย)" -ForegroundColor Green
 Write-Host " -------------------------------------------------------" -ForegroundColor Cyan
 
 # วนลูปนับถอยหลัง 5 วินาทีก่อนรีสตาร์ท เพื่อให้ผู้ใช้รู้ตัวและเซฟงานได้ทัน
