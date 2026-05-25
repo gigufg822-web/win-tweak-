@@ -1,4 +1,45 @@
+$Host.UI.RawUI.WindowTitle = "NONG KIM - System Verification"
+Clear-Host
+
+$CorrectKey = "nongkim"
+
+function Get-MaskedInput {
+    param ([string]$Prompt = "Enter Access Key: ")
+    Write-Host $Prompt -NoNewline -ForegroundColor Cyan
+    $Password = New-Object System.Security.SecureString
+    while ($true) {
+        $Key = [Console]::ReadKey($true)
+        if ($Key.Key -eq [ConsoleKey]::Enter) {
+            Write-Host ""
+            break
+        }
+        elseif ($Key.Key -eq [ConsoleKey]::Backspace) {
+            if ($Password.Length -gt 0) {
+                $Password.RemoveAt($Password.Length - 1)
+                Write-Host "`b `b" -NoNewline
+            }
+        }
+        elseif ($Key.KeyChar -ne `0) {
+            $Password.AppendChar($Key.KeyChar)
+            Write-Host "*" -NoNewline -ForegroundColor Yellow
+        }
+    }
+    $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)
+    $PlainPassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
+    return $PlainPassword
+}
+
+$UserKey = Get-MaskedInput -Prompt "Enter Key: "
+
+if ($UserKey -ne $CorrectKey) {
+    Write-Host "`n [X] Incorrect Key! Exiting..." -ForegroundColor Red
+    Start-Sleep -Seconds 3
+    Exit
+}
+
 $Host.UI.RawUI.WindowTitle = "NONG KIM - Tweaking System..."
+Write-Host "`n [✓] Access Granted! Starting optimization..." -ForegroundColor Green
+Start-Sleep -Seconds 1
 
 $InterfacesPath = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces"
 Get-ChildItem -Path $InterfacesPath | ForEach-Object {
@@ -79,13 +120,14 @@ $Host.UI.RawUI.WindowTitle = "NONG KIM - Optimization Completed!"
 Write-Host @"
 =========================================================
   _  _  ___  _  _  ___     _  __ ___ __  __  
+
  | \| |/ _ \| \| |/ __|   | |/ /|_ _|  \/  | 
  | .  | (_) | .  | (_ |   |  <  | || |\/| | 
  |_|\_|\___/|_|\_|\___|   |_|\_\|___|_|  |_| 
 =========================================================
 "@ -ForegroundColor Cyan
 
-Write-Host " [✓] ALL REGISTRY TWEAKS APPLIED SUCCESSFULLY! (ABYSS)" -ForegroundColor Green
+Write-Host " [✓] ALL REGISTRY TWEAKS APPLIED SUCCESSFULLY! (nongkim)" -ForegroundColor Green
 Write-Host " -------------------------------------------------------" -ForegroundColor Cyan
 
 for ($i = 5; $i -gt 0; $i--) {
