@@ -13,6 +13,13 @@ function Show-Logo {
 ██  ██ ██ ██    ██ ██  ██ ██ ██    ██     ██  ██   ██ ██  ██  ██ 
 ██   ████  ██████  ██   ████  ██████      ██   ██  ██ ██      ██ 
 =================================================================
+ =========================================================
+ • System & Game: Check System Files / Optimize CitizenFX
+ • Graphics & Boost: Optimize Nvidia Profiler / Run PowerShell
+ • Network & Response: Network Registry Tweak / Optimize Input
+ • Movement: Fast Attack / Fast Turn Around
+ =========================================================
+
 "@ -ForegroundColor White
 }
 
