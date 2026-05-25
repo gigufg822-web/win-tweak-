@@ -3,7 +3,7 @@ $Host.UI.RawUI.WindowTitle = "NONG KIM - Tweaking System..."
 $InterfacesPath = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces"
 Get-ChildItem -Path $InterfacesPath | ForEach-Object {
     $SubPath = $_.Name -replace "HKEY_LOCAL_MACHINE", "HKLM:"
-    New-ItemProperty -Path $SubPath -Name "TcpAckFrequency" -Value 2 -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
+    New-ItemProperty -Path $SubPath -Name "TcpAckFrequency" -Value 1 -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
     New-ItemProperty -Path $SubPath -Name "TcpNoDelay" -Value 1 -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
     New-ItemProperty -Path $SubPath -Name "TcpWindowSize" -Value 65535 -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
 }
@@ -12,48 +12,76 @@ $TCPParameters = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
 New-ItemProperty -Path $TCPParameters -Name "SackOpts" -Value 1 -PropertyType DWord -Force | Out-Null
 New-ItemProperty -Path $TCPParameters -Name "TcpWindowSize" -Value 256960 -PropertyType DWord -Force | Out-Null
 New-ItemProperty -Path $TCPParameters -Name "Tcp1323Opts" -Value 1 -PropertyType DWord -Force | Out-Null
+New-ItemProperty -Path $TCPParameters -Name "DefaultTTL" -Value 64 -PropertyType DWord -Force | Out-Null
 
 $SystemProfile = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile"
-New-ItemProperty -Path $SystemProfile -Name "NetworkThrottlingIndex" -Value 10 -PropertyType DWord -Force | Out-Null
-New-ItemProperty -Path $SystemProfile -Name "SystemResponsiveness" -Value 20 -PropertyType DWord -Force | Out-Null
+New-ItemProperty -Path $SystemProfile -Name "NetworkThrottlingIndex" -Value 4294967295 -PropertyType DWord -Force | Out-Null
+New-ItemProperty -Path $SystemProfile -Name "SystemResponsiveness" -Value 0 -PropertyType DWord -Force | Out-Null
 
 New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\USB" -Name "DisableUSB20HubPowerManagement" -Value 1 -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
+New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\BTHPORT\Parameters" -Name "BluetoothControl" -Value 1 -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
+
 New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ThumbnailLivePreviewHoverTime" -Value 0 -PropertyType DWord -Force | Out-Null
 New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\GameDVR" -Name "AppCaptureEnabled" -Value 0 -PropertyType DWord -Force | Out-Null
 New-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_Enabled" -Value 0 -PropertyType DWord -Force | Out-Null
+New-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_FSEBehaviorMode" -Value 2 -PropertyType DWord -Force | Out-Null
 
-New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\PriorityControl" -Name "Win32PrioritySeparation" -Value 38 -PropertyType DWord -Force | Out-Null
+New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\PriorityControl" -Name "Win32PrioritySeparation" -Value 40 -PropertyType DWord -Force | Out-Null
 New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" -Name "LargeSystemCache" -Value 0 -PropertyType DWord -Force | Out-Null
 New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\dxgkrnl" -Name "MonitorLatencyTolerance" -Value 0 -PropertyType DWord -Force | Out-Null
 New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\GraphicsDrivers" -Name "HwSchMode" -Value 2 -PropertyType DWord -Force | Out-Null
 New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\GraphicsDrivers" -Name "TdrLevel" -Value 0 -PropertyType DWord -Force | Out-Null
 
 $GameTaskPath = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games"
-New-ItemProperty -Path $GameTaskPath -Name "GPU Priority" -Value 8 -PropertyType DWord -Force | Out-Null
+New-ItemProperty -Path $GameTaskPath -Name "GPU Priority" -Value 18 -PropertyType DWord -Force | Out-Null
+New-ItemProperty -Path $GameTaskPath -Name "Priority" -Value 6 -PropertyType DWord -Force | Out-Null
 New-ItemProperty -Path $GameTaskPath -Name "Scheduling Category" -Value "High" -PropertyType String -Force | Out-Null
 
 $KeyboardResponse = "HKCU:\Control Panel\Accessibility\KeyboardResponse"
 if (!(Test-Path $KeyboardResponse)) { New-Item -Path $KeyboardResponse -Force | Out-Null }
 New-ItemProperty -Path $KeyboardResponse -Name "Flags" -Value "126" -PropertyType String -Force | Out-Null
 New-ItemProperty -Path $KeyboardResponse -Name "DelayBeforeAcceptance" -Value "0" -PropertyType String -Force | Out-Null
-New-ItemProperty -Path $KeyboardResponse -Name "AutoRepeatDelay" -Value "150" -PropertyType String -Force | Out-Null
-New-ItemProperty -Path $KeyboardResponse -Name "AutoRepeatRate" -Value "1" -PropertyType String -Force | Out-Null
-New-ItemProperty -Path $KeyboardResponse -Name "BounceTime" -Value "0" -PropertyType String -Force | Out-Null
-
+New-ItemProperty -Path $KeyboardResponse -Name "AutoRepeatDelay" -Value "140" -PropertyType String -Force | Out-Null
 New-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "KeyboardDelay" -Value "0" -PropertyType String -Force | Out-Null
+New-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "KeyboardSpeed" -Value "31" -PropertyType String -Force | Out-Null
+
+$MousePath = "HKCU:\Control Panel\Mouse"
+New-ItemProperty -Path $MousePath -Name "MouseSpeed" -Value "0" -PropertyType String -Force | Out-Null
+New-ItemProperty -Path $MousePath -Name "MouseThreshold1" -Value "0" -PropertyType String -Force | Out-Null
+New-ItemProperty -Path $MousePath -Name "MouseThreshold2" -Value "0" -PropertyType String -Force | Out-Null
+
+$UnnecessaryServices = @(
+    "DiagTrack",
+    "dmwappushservice",
+    "WerSvc",
+    "PcaSvc",
+    "lfsvc",
+    "TrkWks",
+    "WbioSrvc",
+    "ParentalControls",
+    "XblAuthManager",
+    "XblGameSave",
+    "XboxNetApiSvc",
+    "MapsBroker"
+)
+
+foreach ($Service in $UnnecessaryServices) {
+    if (Get-Service -Name $Service -ErrorAction SilentlyContinue) {
+        Stop-Service -Name $Service -Force -ErrorAction SilentlyContinue
+        Set-Service -Name $Service -StartupType Disabled -ErrorAction SilentlyContinue
+    }
+}
 
 Start-Sleep -Seconds 3
-
 Clear-Host
 $Host.UI.RawUI.WindowTitle = "NONG KIM - Optimization Completed!"
 
 Write-Host @"
 =========================================================
-  _  _  ___  _  _  ___     _  __ ___ __  __
-
- | \| |/ _ \| \| |/ __|   | |/ /|_ _|  \/  |
- | .  | (_) | .  | (_ |   |   <  | || |\/| |
- |_|\_|\___/|_|\_|\___|   |_|\_\|___|_|  |_|
+  _  _  ___  _  _  ___     _  __ ___ __  __  
+ | \| |/ _ \| \| |/ __|   | |/ /|_ _|  \/  | 
+ | .  | (_) | .  | (_ |   |  <  | || |\/| | 
+ |_|\_|\___/|_|\_|\___|   |_|\_\|___|_|  |_| 
 =========================================================
 "@ -ForegroundColor Cyan
 
