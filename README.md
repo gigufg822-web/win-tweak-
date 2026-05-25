@@ -13,7 +13,7 @@ function Show-Logo {
 ██  ██ ██ ██    ██ ██  ██ ██ ██    ██     ██  ██   ██ ██  ██  ██ 
 ██   ████  ██████  ██   ████  ██████      ██   ██  ██ ██      ██ 
 =================================================================
-"@ -ForegroundColor Cyan
+"@ -ForegroundColor Green
 }
 
 function Get-MaskedInput {
@@ -43,8 +43,6 @@ function Get-MaskedInput {
 }
 
 Show-Logo
-Write-Host " [!] SYSTEM SECURITY VERIFICATION REQUIRED" -ForegroundColor Yellow
-Write-Host " -------------------------------------------------------" -ForegroundColor Cyan
 Write-Host ""
 
 $UserKey = Get-MaskedInput -Prompt " 🔓 ENTER ACCESS KEY: "
@@ -69,15 +67,26 @@ for ($i = 1; $i -le 100; $i++) {
             $SubPath = $_.Name -replace "HKEY_LOCAL_MACHINE", "HKLM:"
             New-ItemProperty -Path $SubPath -Name "TcpAckFrequency" -Value 1 -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
             New-ItemProperty -Path $SubPath -Name "TcpNoDelay" -Value 1 -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
-            New-ItemProperty -Path $SubPath -Name "TcpWindowSize" -Value 65535 -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
         }
+        
+        # [เพิ่มเติม] รีรีดสปีดอินเทอร์เน็ตผ่าน Netsh โดยไม่ลดทอนความเสถียร
+        netsh int tcp set global autotuninglevel=normal | Out-Null
+        netsh int tcp set global congestionprovider=cubic | Out-Null
+        netsh int tcp set global dca=enabled | Out-Null
+        netsh int tcp set global chimney=enabled | Out-Null
+        netsh int tcp set global ecncapability=disabled | Out-Null
+        netsh int tcp set global timestamps=disabled | Out-Null
     }
     elseif ($i -eq 30) {
         $TCPParameters = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
         New-ItemProperty -Path $TCPParameters -Name "SackOpts" -Value 1 -PropertyType DWord -Force | Out-Null
-        New-ItemProperty -Path $TCPParameters -Name "TcpWindowSize" -Value 256960 -PropertyType DWord -Force | Out-Null
         New-ItemProperty -Path $TCPParameters -Name "Tcp1323Opts" -Value 1 -PropertyType DWord -Force | Out-Null
         New-ItemProperty -Path $TCPParameters -Name "DefaultTTL" -Value 64 -PropertyType DWord -Force | Out-Null
+        
+        # [เพิ่มเติม] ปลดล็อกการกั๊กแบนด์วิดท์ QoS (Quality of Service) ของ Windows ให้วิ่ง 100%
+        $QoSPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Psched"
+        if (!(Test-Path $QoSPath)) { New-Item -Path $QoSPath -Force | Out-Null }
+        New-ItemProperty -Path $QoSPath -Name "NonBestEffortLimit" -Value 0 -PropertyType DWord -Force | Out-Null
     }
     elseif ($i -eq 50) {
         $SystemProfile = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile"
