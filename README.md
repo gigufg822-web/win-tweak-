@@ -1,3 +1,9 @@
+if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    $Arguments = "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`""
+    Start-Process powershell -ArgumentList $Arguments -Verb RunAs
+    Exit
+}
+
 $Host.UI.RawUI.WindowTitle = "NONG KIM - System Verification"
 Clear-Host
 
@@ -119,11 +125,11 @@ $Host.UI.RawUI.WindowTitle = "NONG KIM - Optimization Completed!"
 
 Write-Host @"
 =========================================================
-  _  _  ___  _  _  ___     _  __ ___ __  __  
+  _  _  ___  _  _  ___      _  __ ___ __  __  
 
- | \| |/ _ \| \| |/ __|   | |/ /|_ _|  \/  | 
- | .  | (_) | .  | (_ |   |  <  | || |\/| | 
- |_|\_|\___/|_|\_|\___|   |_|\_\|___|_|  |_| 
+ | \| |/ _ \| \| |/ __|    | |/ /|_ _|  \/  | 
+ | .  | (_) | .  | (_ |    |  <  | || |\/| | 
+ |_|\_|\___/|_|\_|\___|    |_|\_\|___|_|  |_| 
 =========================================================
 "@ -ForegroundColor Cyan
 
@@ -134,6 +140,6 @@ for ($i = 5; $i -gt 0; $i--) {
     Write-Host "`r [!] Your PC will restart automatically in $i seconds... " -ForegroundColor Yellow -NoNewline
     Start-Sleep -Seconds 1
 }
-Write-Host "`r [!] Restarting Windows Now!                               " -ForegroundColor Red
+Write-Host "`r [!] Restarting Windows Now!                                " -ForegroundColor Red
 
 Restart-Computer -Force
