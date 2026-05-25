@@ -45,7 +45,7 @@ function Get-MaskedInput {
 Show-Logo
 Write-Host ""
 
-$UserKey = Get-MaskedInput -Prompt " 🔓 ENTER ACCESS KEY: "
+$UserKey = Get-MaskedInput -Prompt "ENTER ACCESS KEY:"
 
 if ($UserKey -ne $CorrectKey) {
     Write-Host "`n [X] ACCESS DENIED! Invalid Key. Exiting..." -ForegroundColor Red
