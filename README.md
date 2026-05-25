@@ -13,7 +13,7 @@ function Show-Logo {
 ██  ██ ██ ██    ██ ██  ██ ██ ██    ██     ██  ██   ██ ██  ██  ██ 
 ██   ████  ██████  ██   ████  ██████      ██   ██  ██ ██      ██ 
 =================================================================
-"@ -ForegroundColor Green
+"@ -ForegroundColor White
 }
 
 function Get-MaskedInput {
