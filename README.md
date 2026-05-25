@@ -57,7 +57,7 @@ Write-Host @"
 =========================================================
 "@ -ForegroundColor Cyan
 
-Write-Host " [✓] ALL REGISTRY TWEAKS APPLIED SUCCESSFULLY! (รีตัวไว+ตีง่าย)" -ForegroundColor Green
+Write-Host " [✓] ALL REGISTRY TWEAKS APPLIED SUCCESSFULLY! (ABYSS)" -ForegroundColor Green
 Write-Host " -------------------------------------------------------" -ForegroundColor Cyan
 
 for ($i = 5; $i -gt 0; $i--) {
