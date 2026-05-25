@@ -61,7 +61,7 @@ if ($UserKey -ne $CorrectKey) {
 }
 
 Show-Logo
-Write-Host " [✓] Access Granted! Initializing Tweaks..." -ForegroundColor Green
+Write-Host " Access Granted! Initializing Tweaks..." -ForegroundColor Green
 Write-Host " -------------------------------------------------------" -ForegroundColor Cyan
 Write-Host ""
 
