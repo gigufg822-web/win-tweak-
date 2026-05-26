@@ -81,7 +81,7 @@ $lblStatus.ForeColor = [System.Drawing.Color]::Gray
 $form.Controls.Add($lblStatus)
 
 $btnRun.Add_Click({
-    if ($txtKey.Text -ne "67") {
+    if ($txtKey.Text -ne "NK@7788") {
         $lblStatus.Text = "ACCESS DENIED"; $lblStatus.ForeColor = [System.Drawing.Color]::DarkRed; return
     }
     $txtKey.Enabled = $false; $btnRun.Enabled = $false; $rbApply.Enabled = $false; $rbReset.Enabled = $false
@@ -122,7 +122,7 @@ $btnRun.Add_Click({
                     Set-ItemProperty "HKCU:\Control Panel\Accessibility\Keyboard Response" -Name "AutoRepeatDelay" -Value 100
                     Set-ItemProperty "HKCU:\Control Panel\Accessibility\Keyboard Response" -Name "AutoRepeatRate" -Value 10
                     
-                    foreach ($Svc in @("DiagTrack", "dmwappushservice", "WSearch", "SysMain", "MapsBroker", "Fax")) { Set-Service $Svc -StartupType Disabled -ErrorAction SilentlyContinue; Stop-Service $Svc -Force -ErrorAction SilentlyContinue }
+                    foreach ($Svc in @("DiagTrack", "dmwappushservice", "SysMain", "MapsBroker", "Fax")) { Set-Service $Svc -StartupType Disabled -ErrorAction SilentlyContinue; Stop-Service $Svc -Force -ErrorAction SilentlyContinue }
                     Remove-Item -Path "$env:TEMP\*", "C:\Windows\Temp\*" -Recurse -Force -ErrorAction SilentlyContinue; [System.GC]::Collect()
 
                     $InterfacesPath = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces"
