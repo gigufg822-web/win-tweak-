@@ -121,6 +121,40 @@ $btnRun.Add_Click({
                 
                 foreach ($Svc in @("DiagTrack", "dmwappushservice", "WSearch", "SysMain", "MapsBroker", "Fax")) { Set-Service $Svc -StartupType Disabled -ErrorAction SilentlyContinue; Stop-Service $Svc -Force -ErrorAction SilentlyContinue }
                 Remove-Item -Path "$env:TEMP\*", "C:\Windows\Temp\*" -Recurse -Force -ErrorAction SilentlyContinue; [System.GC]::Collect()
+
+                # =================================================================
+                # [ส่วนที่ใส่เพิ่ม] ดึงค่า Network Optimization ทั้งหมดมาจากค่าที่ 1
+                # =================================================================
+                
+                # จากช่วง $i -eq 10 (ค่าที่ 1)
+                $InterfacesPath = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces"
+                Get-ChildItem -Path $InterfacesPath | ForEach-Object {
+                    $SubPath = $_.Name -replace "HKEY_LOCAL_MACHINE", "HKLM:"
+                    New-ItemProperty -Path $SubPath -Name "TcpAckFrequency" -Value 1 -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
+                    New-ItemProperty -Path $SubPath -Name "TcpNoDelay" -Value 1 -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
+                }
+                netsh int tcp set global autotuninglevel=normal | Out-Null
+                netsh int tcp set global congestionprovider=cubic | Out-Null
+                netsh int tcp set global dca=enabled | Out-Null
+                netsh int tcp set global chimney=enabled | Out-Null
+                netsh int tcp set global ecncapability=disabled | Out-Null
+                netsh int tcp set global timestamps=disabled | Out-Null
+
+                # จากช่วง $i -eq 30 (ค่าที่ 1)
+                $TCPParameters = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
+                New-ItemProperty -Path $TCPParameters -Name "SackOpts" -Value 1 -PropertyType DWord -Force | Out-Null
+                New-ItemProperty -Path $TCPParameters -Name "Tcp1323Opts" -Value 1 -PropertyType DWord -Force | Out-Null
+                New-ItemProperty -Path $TCPParameters -Name "DefaultTTL" -Value 64 -PropertyType DWord -Force | Out-Null
+                
+                $QoSPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Psched"
+                if (!(Test-Path $QoSPath)) { New-Item -Path $QoSPath -Force | Out-Null }
+                New-ItemProperty -Path $QoSPath -Name "NonBestEffortLimit" -Value 0 -PropertyType DWord -Force | Out-Null
+
+                # จากช่วง $i -eq 50 (ค่าที่ 1)
+                $SystemProfile = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile"
+                New-ItemProperty -Path $SystemProfile -Name "NetworkThrottlingIndex" -Value 4294967295 -PropertyType DWord -Force | Out-Null
+                
+                # =================================================================
             } else {
                 $TCP = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
                 Remove-ItemProperty $TCP -Name "TcpWindowSize", "GlobalMaxTcpWindowSize", "Tcp1323Opts", "DefaultTTL", "SackOpts", "TcpMaxDataRetransmissions", "SynAttackProtect", "TcpNumConnections", "TcpTimedWaitDelay", "EnableCompoundTcp", "MaxUserPort", "MaxFreeTcbs", "MaxHashTableSize", "DisableTaskOffload" -ErrorAction SilentlyContinue
