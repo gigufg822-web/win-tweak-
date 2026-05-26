@@ -95,7 +95,7 @@ $btnRun.Add_Click({
             if ($i -eq 50) {
                 if ($rbApply.Checked) {
                     $TCP = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
-                    $NetSettings = @@{
+                    $NetSettings = @{
                         "TcpWindowSize" = 65535; "GlobalMaxTcpWindowSize" = 65535; "Tcp1323Opts" = 1; "DefaultTTL" = 64; 
                         "SackOpts" = 1; "TcpMaxDataRetransmissions" = 2; "SynAttackProtect" = 0; 
                         "TcpNumConnections" = 16777214; "TcpTimedWaitDelay" = 30; "EnableCompoundTcp" = 1;
