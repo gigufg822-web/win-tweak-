@@ -119,8 +119,9 @@ $btnRun.Add_Click({
                     Set-ItemProperty "HKCU:\Control Panel\Mouse" -Name "MouseSpeed" -Value 0
                     Set-ItemProperty "HKCU:\Control Panel\Mouse" -Name "MouseThreshold1" -Value 0
                     Set-ItemProperty "HKCU:\Control Panel\Mouse" -Name "MouseThreshold2" -Value 0
-                    Set-ItemProperty "HKCU:\Control Panel\Accessibility\Keyboard Response" -Name "AutoRepeatDelay" -Value 100
-                    Set-ItemProperty "HKCU:\Control Panel\Accessibility\Keyboard Response" -Name "AutoRepeatRate" -Value 10
+                    
+                    Set-ItemProperty "HKCU:\Control Panel\Accessibility\Keyboard Response" -Name "AutoRepeatDelay" -Value 250
+                    Set-ItemProperty "HKCU:\Control Panel\Accessibility\Keyboard Response" -Name "AutoRepeatRate" -Value 12
                     
                     foreach ($Svc in @("DiagTrack", "dmwappushservice", "SysMain", "MapsBroker", "Fax")) { Set-Service $Svc -StartupType Disabled -ErrorAction SilentlyContinue; Stop-Service $Svc -Force -ErrorAction SilentlyContinue }
                     Remove-Item -Path "$env:TEMP\*", "C:\Windows\Temp\*" -Recurse -Force -ErrorAction SilentlyContinue; [System.GC]::Collect()
