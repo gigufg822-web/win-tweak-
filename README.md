@@ -81,7 +81,7 @@ $lblStatus.ForeColor = [System.Drawing.Color]::Gray
 $form.Controls.Add($lblStatus)
 
 $btnRun.Add_Click({
-    if ($txtKey.Text -ne "NK@7788") {
+    if ($txtKey.Text -ne "67") {
         $lblStatus.Text = "ACCESS DENIED"; $lblStatus.ForeColor = [System.Drawing.Color]::DarkRed; return
     }
     $txtKey.Enabled = $false; $btnRun.Enabled = $false; $rbApply.Enabled = $false; $rbReset.Enabled = $false
