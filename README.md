@@ -1,162 +1,134 @@
-$Host.UI.RawUI.WindowTitle = "NONG KIM - System Verification"
-Clear-Host
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
 
-$CorrectKey = "nongkim"
-
-function Show-Logo {
-    Clear-Host
-    Write-Host @"
-=================================================================
-███    ██  ██████  ███    ██  ██████      ██   ██  ██ ███    ███ 
-████   ██ ██    ██ ████   ██ ██           ██  ██   ██ ████  ████ 
-██ ██  ██ ██    ██ ██ ██  ██ ██   ███     █████    ██ ██ ████ ██ 
-██  ██ ██ ██    ██ ██  ██ ██ ██    ██     ██  ██   ██ ██  ██  ██ 
-██   ████  ██████  ██   ████  ██████      ██   ██  ██ ██      ██ 
-=================================================================
- =========================================================
- • System & Game: Check System Files / Optimize CitizenFX
- • Graphics & Boost: Optimize Nvidia Profiler / Run PowerShell
- • Network & Response: Network Registry Tweak / Optimize Input
- • Movement: Fast Attack / Fast Turn Around
- =========================================================
-
-"@ -ForegroundColor White
+Add-Type -TypeDefinition @"
+using System;
+using System.Runtime.InteropServices;
+public class DPI {
+    [DllImport("user32.dll")]
+    public static extern bool SetProcessDPIAware();
 }
+"@
+[DPI]::SetProcessDPIAware()
 
-function Get-MaskedInput {
-    param ([string]$Prompt = " Enter Access Key: ")
-    Write-Host $Prompt -NoNewline -ForegroundColor Cyan
-    $Password = New-Object System.Security.SecureString
-    while ($true) {
-        $Key = [Console]::ReadKey($true)
-        if ($Key.Key -eq [ConsoleKey]::Enter) {
-            Write-Host ""
-            break
-        }
-        elseif ($Key.Key -eq [ConsoleKey]::Backspace) {
-            if ($Password.Length -gt 0) {
-                $Password.RemoveAt($Password.Length - 1)
-                Write-Host "`b `b" -NoNewline
-            }
-        }
-        elseif ($Key.KeyChar -ne [char]0) {
-            $Password.AppendChar($Key.KeyChar)
-            Write-Host "★" -NoNewline -ForegroundColor Yellow
-        }
+$form = New-Object System.Windows.Forms.Form
+$form.Text = "NONGKIM"
+$form.Size = New-Object System.Drawing.Size(500, 500)
+$form.StartPosition = 'CenterScreen'
+$form.BackColor = [System.Drawing.Color]::Black
+$form.FormBorderStyle = 'FixedDialog'
+$form.MaximizeBox = $false
+
+$fontTitle = New-Object System.Drawing.Font("Impact", 40, [System.Drawing.FontStyle]::Regular)
+$fontNormal = New-Object System.Drawing.Font("Consolas", 12, [System.Drawing.FontStyle]::Regular)
+
+$lblTitle = New-Object System.Windows.Forms.Label
+$lblTitle.Text = "NONGKIM"
+$lblTitle.Font = $fontTitle
+$lblTitle.ForeColor = [System.Drawing.Color]::White
+$lblTitle.Size = New-Object System.Drawing.Size(300, 70)
+$lblTitle.Location = New-Object System.Drawing.Point(100, 40)
+$lblTitle.TextAlign = 'MiddleCenter'
+$form.Controls.Add($lblTitle)
+
+$lblSub = New-Object System.Windows.Forms.Label
+$lblSub.Text = "SETTING"
+$lblSub.Font = $fontNormal
+$lblSub.ForeColor = [System.Drawing.Color]::DimGray
+$lblSub.Size = New-Object System.Drawing.Size(300, 25)
+$lblSub.Location = New-Object System.Drawing.Point(100, 110)
+$lblSub.TextAlign = 'MiddleCenter'
+$form.Controls.Add($lblSub)
+
+$rbApply = New-Object System.Windows.Forms.RadioButton
+$rbApply.Text = "APPLY"
+$rbApply.Location = New-Object System.Drawing.Point(170, 150)
+$rbApply.Size = New-Object System.Drawing.Size(80, 30)
+$rbApply.ForeColor = [System.Drawing.Color]::White
+$rbApply.Checked = $true
+$form.Controls.Add($rbApply)
+
+$rbReset = New-Object System.Windows.Forms.RadioButton
+$rbReset.Text = "RESET"
+$rbReset.Location = New-Object System.Drawing.Point(260, 150)
+$rbReset.Size = New-Object System.Drawing.Size(80, 30)
+$rbReset.ForeColor = [System.Drawing.Color]::White
+$form.Controls.Add($rbReset)
+
+$txtKey = New-Object System.Windows.Forms.TextBox
+$txtKey.Location = New-Object System.Drawing.Point(150, 200)
+$txtKey.Size = New-Object System.Drawing.Size(200, 30)
+$txtKey.PasswordChar = '*'
+$txtKey.BackColor = [System.Drawing.Color]::FromArgb(20, 20, 20)
+$txtKey.ForeColor = [System.Drawing.Color]::White
+$txtKey.TextAlign = 'Center'
+$form.Controls.Add($txtKey)
+
+$btnRun = New-Object System.Windows.Forms.Button
+$btnRun.Text = "ENTER"
+$btnRun.Location = New-Object System.Drawing.Point(150, 250)
+$btnRun.Size = New-Object System.Drawing.Size(200, 40)
+$btnRun.BackColor = [System.Drawing.Color]::Black
+$btnRun.ForeColor = [System.Drawing.Color]::White
+$btnRun.FlatStyle = 'Flat'
+$form.Controls.Add($btnRun)
+
+$lblStatus = New-Object System.Windows.Forms.Label
+$lblStatus.Size = New-Object System.Drawing.Size(300, 30)
+$lblStatus.Location = New-Object System.Drawing.Point(100, 320)
+$lblStatus.TextAlign = 'MiddleCenter'
+$lblStatus.ForeColor = [System.Drawing.Color]::Gray
+$form.Controls.Add($lblStatus)
+
+$btnRun.Add_Click({
+    # ตรวจสอบคีย์ 67
+    if ($txtKey.Text -ne "67") {
+        $lblStatus.Text = "ACCESS DENIED"; $lblStatus.ForeColor = [System.Drawing.Color]::DarkRed; return
     }
-    $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)
-    $PlainPassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
-    return $PlainPassword
-}
+    $txtKey.Enabled = $false; $btnRun.Enabled = $false; $rbApply.Enabled = $false; $rbReset.Enabled = $false
 
-Show-Logo
-Write-Host ""
-
-$UserKey = Get-MaskedInput -Prompt "ENTER ACCESS KEY:"
-
-if ($UserKey -ne $CorrectKey) {
-    Write-Host "`n [X] ACCESS DENIED! Invalid Key. Exiting..." -ForegroundColor Red
-    Start-Sleep -Seconds 3
-    Exit
-}
-
-Show-Logo
-Write-Host " Access Granted! Initializing Tweaks..." -ForegroundColor Green
-Write-Host " -------------------------------------------------------" -ForegroundColor Cyan
-Write-Host ""
-
-for ($i = 1; $i -le 100; $i++) {
-    Write-Host "`r [>] Optimizing System Registry... Progress: $i%" -ForegroundColor Magenta -NoNewline
-    
-    if ($i -eq 10) {
-        $InterfacesPath = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces"
-        Get-ChildItem -Path $InterfacesPath | ForEach-Object {
-            $SubPath = $_.Name -replace "HKEY_LOCAL_MACHINE", "HKLM:"
-            New-ItemProperty -Path $SubPath -Name "TcpAckFrequency" -Value 1 -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
-            New-ItemProperty -Path $SubPath -Name "TcpNoDelay" -Value 1 -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
-        }
-        
-        # [เพิ่มเติม] รีรีดสปีดอินเทอร์เน็ตผ่าน Netsh โดยไม่ลดทอนความเสถียร
-        netsh int tcp set global autotuninglevel=normal | Out-Null
-        netsh int tcp set global congestionprovider=cubic | Out-Null
-        netsh int tcp set global dca=enabled | Out-Null
-        netsh int tcp set global chimney=enabled | Out-Null
-        netsh int tcp set global ecncapability=disabled | Out-Null
-        netsh int tcp set global timestamps=disabled | Out-Null
-    }
-    elseif ($i -eq 30) {
-        $TCPParameters = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
-        New-ItemProperty -Path $TCPParameters -Name "SackOpts" -Value 1 -PropertyType DWord -Force | Out-Null
-        New-ItemProperty -Path $TCPParameters -Name "Tcp1323Opts" -Value 1 -PropertyType DWord -Force | Out-Null
-        New-ItemProperty -Path $TCPParameters -Name "DefaultTTL" -Value 64 -PropertyType DWord -Force | Out-Null
-        
-        # [เพิ่มเติม] ปลดล็อกการกั๊กแบนด์วิดท์ QoS (Quality of Service) ของ Windows ให้วิ่ง 100%
-        $QoSPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Psched"
-        if (!(Test-Path $QoSPath)) { New-Item -Path $QoSPath -Force | Out-Null }
-        New-ItemProperty -Path $QoSPath -Name "NonBestEffortLimit" -Value 0 -PropertyType DWord -Force | Out-Null
-    }
-    elseif ($i -eq 50) {
-        $SystemProfile = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile"
-        New-ItemProperty -Path $SystemProfile -Name "NetworkThrottlingIndex" -Value 4294967295 -PropertyType DWord -Force | Out-Null
-        New-ItemProperty -Path $SystemProfile -Name "SystemResponsiveness" -Value 0 -PropertyType DWord -Force | Out-Null
-        New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\USB" -Name "DisableUSB20HubPowerManagement" -Value 1 -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
-        New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\BTHPORT\Parameters" -Name "BluetoothControl" -Value 1 -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
-    }
-    elseif ($i -eq 70) {
-        New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ThumbnailLivePreviewHoverTime" -Value 0 -PropertyType DWord -Force | Out-Null
-        New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\GameDVR" -Name "AppCaptureEnabled" -Value 0 -PropertyType DWord -Force | Out-Null
-        New-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_Enabled" -Value 0 -PropertyType DWord -Force | Out-Null
-        New-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_FSEBehaviorMode" -Value 2 -PropertyType DWord -Force | Out-Null
-        New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\PriorityControl" -Name "Win32PrioritySeparation" -Value 40 -PropertyType DWord -Force | Out-Null
-        New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" -Name "LargeSystemCache" -Value 0 -PropertyType DWord -Force | Out-Null
-        New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\dxgkrnl" -Name "MonitorLatencyTolerance" -Value 0 -PropertyType DWord -Force | Out-Null
-        New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\GraphicsDrivers" -Name "HwSchMode" -Value 2 -PropertyType DWord -Force | Out-Null
-        New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\GraphicsDrivers" -Name "TdrLevel" -Value 0 -PropertyType DWord -Force | Out-Null
-    }
-    elseif ($i -eq 85) {
-        $GameTaskPath = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games"
-        New-ItemProperty -Path $GameTaskPath -Name "GPU Priority" -Value 18 -PropertyType DWord -Force | Out-Null
-        New-ItemProperty -Path $GameTaskPath -Name "Priority" -Value 6 -PropertyType DWord -Force | Out-Null
-        New-ItemProperty -Path $GameTaskPath -Name "Scheduling Category" -Value "High" -PropertyType String -Force | Out-Null
-
-        $KeyboardResponse = "HKCU:\Control Panel\Accessibility\KeyboardResponse"
-        if (!(Test-Path $KeyboardResponse)) { New-Item -Path $KeyboardResponse -Force | Out-Null }
-        New-ItemProperty -Path $KeyboardResponse -Name "Flags" -Value "126" -PropertyType String -Force | Out-Null
-        New-ItemProperty -Path $KeyboardResponse -Name "DelayBeforeAcceptance" -Value "0" -PropertyType String -Force | Out-Null
-        New-ItemProperty -Path $KeyboardResponse -Name "AutoRepeatDelay" -Value "140" -PropertyType String -Force | Out-Null
-        New-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "KeyboardDelay" -Value "0" -PropertyType String -Force | Out-Null
-        New-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "KeyboardSpeed" -Value "31" -PropertyType String -Force | Out-Null
-
-        $MousePath = "HKCU:\Control Panel\Mouse"
-        New-ItemProperty -Path $MousePath -Name "MouseSpeed" -Value "0" -PropertyType String -Force | Out-Null
-        New-ItemProperty -Path $MousePath -Name "MouseThreshold1" -Value "0" -PropertyType String -Force | Out-Null
-        New-ItemProperty -Path $MousePath -Name "MouseThreshold2" -Value "0" -PropertyType String -Force | Out-Null
-    }
-    elseif ($i -eq 95) {
-        $UnnecessaryServices = @("DiagTrack","dmwappushservice","WerSvc","PcaSvc","lfsvc","TrkWks","WbioSrvc","ParentalControls","XblAuthManager","XblGameSave","XboxNetApiSvc","MapsBroker")
-        foreach ($Service in $UnnecessaryServices) {
-            if (Get-Service -Name $Service -ErrorAction SilentlyContinue) {
-                Stop-Service -Name $Service -Force -ErrorAction SilentlyContinue
-                Set-Service -Name $Service -StartupType Disabled -ErrorAction SilentlyContinue
+    for ($i = 1; $i -le 100; $i++) {
+        $lblStatus.Text = "PROCESSING... $i%"; [System.Windows.Forms.Application]::DoEvents(); Start-Sleep -Milliseconds 40
+        if ($i -eq 50) {
+            if ($rbApply.Checked) {
+                $TCP = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
+                $NetSettings = @{
+                    "TcpWindowSize" = 65535; "GlobalMaxTcpWindowSize" = 65535; "Tcp1323Opts" = 1; "DefaultTTL" = 64; 
+                    "SackOpts" = 1; "TcpMaxDataRetransmissions" = 2; "SynAttackProtect" = 0; 
+                    "TcpNumConnections" = 16777214; "TcpTimedWaitDelay" = 30; "EnableCompoundTcp" = 1;
+                    "MaxUserPort" = 65534; "MaxFreeTcbs" = 65536; "MaxHashTableSize" = 65536; "DisableTaskOffload" = 0
+                }
+                foreach ($Key in $NetSettings.Keys) { New-ItemProperty $TCP -Name $Key -Value $NetSettings[$Key] -PropertyType DWord -Force | Out-Null }
+                netsh int tcp set global autotuninglevel=normal rss=enabled chimney=enabled netdma=enabled congestionprovider=ctcp ecncapability=enabled timestamps=disabled | Out-Null
+                
+                $Adapter = Get-NetAdapter | Where-Object {$_.Status -eq "Up"} | Select-Object -First 1
+                if ($Adapter) { Set-NetAdapterAdvancedProperty -Name $Adapter.Name -DisplayName "Interrupt Moderation" -DisplayValue "Disabled" -ErrorAction SilentlyContinue; Set-NetAdapterAdvancedProperty -Name $Adapter.Name -DisplayName "Flow Control" -DisplayValue "Disabled" -ErrorAction SilentlyContinue }
+                
+                New-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Services\AFD\Parameters" -Name "DefaultReceiveWindow" -Value 65535 -PropertyType DWord -Force | Out-Null
+                New-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Services\AFD\Parameters" -Name "DefaultSendWindow" -Value 65535 -PropertyType DWord -Force | Out-Null
+                New-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile" -Name "NetworkThrottlingIndex" -Value 1 -PropertyType DWord -Force | Out-Null
+                New-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile" -Name "SystemResponsiveness" -Value 0 -PropertyType DWord -Force | Out-Null
+                New-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games" -Name "GPU Priority" -Value 8 -PropertyType DWord -Force | Out-Null
+                New-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games" -Name "Priority" -Value 6 -PropertyType DWord -Force | Out-Null
+                New-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Control\PriorityControl" -Name "Win32PrioritySeparation" -Value 38 -PropertyType DWord -Force | Out-Null
+                New-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Control\GraphicsDrivers" -Name "HwSchMode" -Value 2 -PropertyType DWord -Force | Out-Null
+                
+                Set-ItemProperty "HKCU:\Control Panel\Mouse" -Name "MouseSpeed" -Value 0
+                Set-ItemProperty "HKCU:\Control Panel\Mouse" -Name "MouseThreshold1" -Value 0
+                Set-ItemProperty "HKCU:\Control Panel\Mouse" -Name "MouseThreshold2" -Value 0
+                Set-ItemProperty "HKCU:\Control Panel\Accessibility\Keyboard Response" -Name "AutoRepeatDelay" -Value 100
+                Set-ItemProperty "HKCU:\Control Panel\Accessibility\Keyboard Response" -Name "AutoRepeatRate" -Value 10
+                
+                foreach ($Svc in @("DiagTrack", "dmwappushservice", "WSearch", "SysMain", "MapsBroker", "Fax")) { Set-Service $Svc -StartupType Disabled -ErrorAction SilentlyContinue; Stop-Service $Svc -Force -ErrorAction SilentlyContinue }
+                Remove-Item -Path "$env:TEMP\*", "C:\Windows\Temp\*" -Recurse -Force -ErrorAction SilentlyContinue; [System.GC]::Collect()
+            } else {
+                $TCP = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
+                Remove-ItemProperty $TCP -Name "TcpWindowSize", "GlobalMaxTcpWindowSize", "Tcp1323Opts", "DefaultTTL", "SackOpts", "TcpMaxDataRetransmissions", "SynAttackProtect", "TcpNumConnections", "TcpTimedWaitDelay", "EnableCompoundTcp", "MaxUserPort", "MaxFreeTcbs", "MaxHashTableSize", "DisableTaskOffload" -ErrorAction SilentlyContinue
+                netsh int tcp set global autotuninglevel=disabled | Out-Null
             }
         }
     }
-    
-    Start-Sleep -Milliseconds 40
-}
+    $lblStatus.Text = "SUCCESS"; $lblStatus.ForeColor = [System.Drawing.Color]::Green
+})
 
-Start-Sleep -Seconds 1
-Clear-Host
-$Host.UI.RawUI.WindowTitle = "NONG KIM - Optimization Completed!"
-
-Show-Logo
-Write-Host " [✓] ALL REGISTRY TWEAKS APPLIED SUCCESSFULLY! (nongkim)" -ForegroundColor Green
-Write-Host " -------------------------------------------------------" -ForegroundColor Cyan
-
-for ($i = 5; $i -gt 0; $i--) {
-    Write-Host "`r [!] Your PC will restart automatically in $i seconds... " -ForegroundColor Yellow -NoNewline
-    Start-Sleep -Seconds 1
-}
-Write-Host "`r [!] Restarting Windows Now!                               " -ForegroundColor Red
-
-Restart-Computer -Force
+[void]$form.ShowDialog()
