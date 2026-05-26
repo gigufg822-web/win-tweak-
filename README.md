@@ -95,7 +95,7 @@ $btnRun.Add_Click({
             if ($i -eq 50) {
                 if ($rbApply.Checked) {
                     $TCP = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
-                    $NetSettings = @{
+                    $NetSettings = @@{
                         "TcpWindowSize" = 65535; "GlobalMaxTcpWindowSize" = 65535; "Tcp1323Opts" = 1; "DefaultTTL" = 64; 
                         "SackOpts" = 1; "TcpMaxDataRetransmissions" = 2; "SynAttackProtect" = 0; 
                         "TcpNumConnections" = 16777214; "TcpTimedWaitDelay" = 30; "EnableCompoundTcp" = 1;
@@ -120,8 +120,8 @@ $btnRun.Add_Click({
                     Set-ItemProperty "HKCU:\Control Panel\Mouse" -Name "MouseThreshold1" -Value 0
                     Set-ItemProperty "HKCU:\Control Panel\Mouse" -Name "MouseThreshold2" -Value 0
                     
-                    Set-ItemProperty "HKCU:\Control Panel\Accessibility\Keyboard Response" -Name "AutoRepeatDelay" -Value 250
-                    Set-ItemProperty "HKCU:\Control Panel\Accessibility\Keyboard Response" -Name "AutoRepeatRate" -Value 12
+                    Set-ItemProperty "HKCU:\Control Panel\Accessibility\Keyboard Response" -Name "AutoRepeatDelay" -Value 200
+                    Set-ItemProperty "HKCU:\Control Panel\Accessibility\Keyboard Response" -Name "AutoRepeatRate" -Value 11
                     
                     foreach ($Svc in @("DiagTrack", "dmwappushservice", "SysMain", "MapsBroker", "Fax")) { Set-Service $Svc -StartupType Disabled -ErrorAction SilentlyContinue; Stop-Service $Svc -Force -ErrorAction SilentlyContinue }
                     Remove-Item -Path "$env:TEMP\*", "C:\Windows\Temp\*" -Recurse -Force -ErrorAction SilentlyContinue; [System.GC]::Collect()
