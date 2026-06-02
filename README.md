@@ -167,7 +167,7 @@ $btnRun.Add_Click({
             bcdedit /deletevalue useplatformclock 2>$null | Out-Null
             
             # Call the command to set resolution to 0.5ms (5000) immediately upon run
-            [uint]$currentRes = 0
+            [uint32]$currentRes = 0
             [NativeMethods]::NtSetTimerResolution(5000, $true, [ref]$currentRes) | Out-Null
             # =============================================================
 
@@ -182,7 +182,7 @@ $btnRun.Add_Click({
             Remove-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Kernel" -Name "GlobalTimerResolutionRequests" -ErrorAction SilentlyContinue
             bcdedit /deletevalue disabledynamictick 2>$null | Out-Null
             
-            [uint]$currentRes = 0
+            [uint32]$currentRes = 0
             [NativeMethods]::NtSetTimerResolution(5000, $false, [ref]$currentRes) | Out-Null
         }
         
