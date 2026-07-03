@@ -127,7 +127,7 @@ $btnRun.Add_Click({
             # --- FilterKeys (Delay 150 / Rate 25) ---
             Set-ItemProperty "HKCU:\Control Panel\Accessibility\Keyboard Response" -Name "Flags" -Value "59"
             Set-ItemProperty "HKCU:\Control Panel\Accessibility\Keyboard Response" -Name "AutoRepeatDelay" -Value "150"
-            Set-ItemProperty "HKCU:\Control Panel\Accessibility\Keyboard Response" -Name "AutoRepeatRate" -Value "25"
+            Set-ItemProperty "HKCU:\Control Panel\Accessibility\Keyboard Response" -Name "AutoRepeatRate" -Value "1"
             Set-ItemProperty "HKCU:\Control Panel\Accessibility\Keyboard Response" -Name "BounceTime" -Value "0"
             Set-ItemProperty "HKCU:\Control Panel\Accessibility\Keyboard Response" -Name "DelayBeforeAcceptance" -Value "0"
             
