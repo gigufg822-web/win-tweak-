@@ -15,7 +15,7 @@ public class NativeMethods {
 "@
 [DPI]::SetProcessDPIAware()
 $form = New-Object System.Windows.Forms.Form
-$form.Text = "NONGKIM"
+$form.Text = "67"
 $form.Size = New-Object System.Drawing.Size(500, 500)
 $form.StartPosition = 'CenterScreen'
 $form.BackColor = [System.Drawing.Color]::Black
